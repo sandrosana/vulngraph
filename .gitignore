@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+
+# Output
+*.zip
+*.log
+*.json
+*.html
+
+# OS
+.DS_Store
