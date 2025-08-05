@@ -1,6 +1,4 @@
 import json
-import os
-import networkx as nx
 from networkx.readwrite import json_graph
 
 def export_graph_json(G, filename="graph.json"):
@@ -11,6 +9,7 @@ def export_graph_json(G, filename="graph.json"):
 
 def export_graph_html(G, filename="graph.html"):
     data = json_graph.node_link_data(G)
+    safe_data = json.dumps(data).replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
 
     html_template = f"""
     <!DOCTYPE html>
@@ -24,23 +23,23 @@ def export_graph_html(G, filename="graph.html"):
         <h2>Vulnerability Graph</h2>
         <div id="mynetwork"></div>
         <script>
-            const data = {json.dumps(data)};
+            const data = {safe_data};
 
-            const nodes = new vis.DataSet(data.nodes.map(n => ({
+            const nodes = new vis.DataSet(data.nodes.map(n => ({{
                 id: n.id,
                 label: n.label,
                 group: n.type
-            })));
+            }})));
 
-            const edges = new vis.DataSet(data.links.map(l => ({
+            const edges = new vis.DataSet(data.links.map(l => ({{
                 from: l.source,
                 to: l.target,
                 label: l.relation || '',
                 arrows: 'to'
-            })));
+            }})));
 
             const container = document.getElementById('mynetwork');
-            const network = new vis.Network(container, { nodes, edges }, {{}});
+            const network = new vis.Network(container, {{ nodes, edges }}, {{}});
         </script>
     </body>
     </html>
